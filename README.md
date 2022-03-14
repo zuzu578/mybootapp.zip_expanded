@@ -1,5 +1,23 @@
 # Spring boot crud 기본 api 보일러 플레이트 
 
+# spring boot 에서 jsp 를 사용할경우 
+1) application.properties 파일에 각 내용을 정의한다.
+
+
+spring.mvc.view.prefix=/WEB-INF/views/
+spring.mvc.view.suffix=.jsp
+
+2) pom.xml ( maven 레퍼지토리에서 ) 해당 jsp / jstl 라이브러리를 받아야한다.
+```	
+ <dependency> 
+ <groupId>javax.servlet</groupId>
+  <artifactId>jstl</artifactId>
+   </dependency>
+    <dependency> 
+    <groupId>org.apache.tomcat.embed</groupId> 
+    <artifactId>tomcat-embed-jasper</artifactId> 
+    </dependency> 
+```
 # spring boot mybatis 초기 설정시 주의사항
 마이바티스 sql 작성 xml 파일을 매핑할때 간혹 application.properties 에 설정해도 잘 안되서 main function 에 설정하여 자바 application 실행시 설정 하도록 해주었다.
 이점은 참고하도록
