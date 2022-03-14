@@ -1,5 +1,39 @@
 # Spring boot crud 기본 api 보일러 플레이트 
 
+# spring boot file upload
+스프링에서 파일 업로드를 할때 multipart 를 사용한다
+<img width="351" alt="스크린샷 2022-03-14 오후 4 43 45" src="https://user-images.githubusercontent.com/69393030/158126661-b85a9da4-cda5-4123-8ce3-5093c00e341c.png">
+파일 업로드와 관련된 것은 application.properties 에서 설정할수있다.
+
+``` java
+@RequestMapping(value="/upload", method=RequestMethod.POST)
+    public String uploadForm(MultipartFile file, ModelAndView mv) {
+		try {
+			String fileName = file.getOriginalFilename();
+			// 경로 + 파일이름 
+	        File target = new File(FileSavePath, fileName);
+	        
+	        //경로 생성
+	        if ( ! new File(FileSavePath).exists()) {
+	            new File(FileSavePath).mkdirs();
+	        }
+	        //파일 복사
+	        try {
+	            FileCopyUtils.copy(file.getBytes(), target);
+	            mv.addObject("file", file);
+	        } catch(Exception e) {
+	            e.printStackTrace();
+	            mv.addObject("file", "error");
+	        }
+	        return "success";
+			
+		}catch(Error e) {
+			return e.getMessage();
+		}
+    }
+
+
+```
 # spring boot 에서 jsp 를 사용할경우 
 1) application.properties 파일에 각 내용을 정의한다.
 
