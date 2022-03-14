@@ -1,5 +1,55 @@
 # Spring boot crud 기본 api 보일러 플레이트 
 
+# spring boot mybatis 초기 설정시 주의사항
+마이바티스 sql 작성 xml 파일을 매핑할때 간혹 application.properties 에 설정해도 잘 안되서 main function 에 설정하여 자바 application 실행시 설정 하도록 해주었다.
+이점은 참고하도록
+``` java
+
+package com.mybootapp.mybootapp;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class MybootappApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MybootappApplication.class, args);
+	}
+	@Autowired
+	private ApplicationContext applicationContext;
+	@Bean
+	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+		sqlSessionFactoryBean.setDataSource(dataSource);
+		sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mapper/**/*.xml"));
+		return sqlSessionFactoryBean.getObject();
+	}
+
+	@Bean
+	public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+
+}
+
+
+
+```
+
+위를 보면 
+
+sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mapper/**/*.xml")); 
+
+이부분이 중요하다. 저것을 빼먹으면 mybatis 매핑이 되지않는다.
 
 # create
 데이터를 간단하게 생성한다.
