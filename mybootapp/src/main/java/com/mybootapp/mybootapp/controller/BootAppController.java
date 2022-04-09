@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,8 +35,8 @@ import com.mybootapp.mybootapp.dao.DaoTest;
 import com.mybootapp.mybootapp.dto.TestDto;
 import com.mybootapp.mybootapp.dto.Update;
 
-@org.springframework.stereotype.Controller
-// @RestController
+
+@RestController
 public class BootAppController {
 	// 파일 업로드 경로
 	private static String FileSavePath = "/Users/helloworld/eclipse-workspace/mybootapp.zip_expanded/mybootapp/src/main/webapp/resources/assets";
@@ -43,10 +44,10 @@ public class BootAppController {
 	@Autowired
 	private DaoTest dao;
 
-	@RequestMapping("/list")
-	public String test(HttpServletRequest req, Model model) {
+	@GetMapping("/list")
+	public HashMap<String,Object> test(HttpServletRequest req) {
+		HashMap<String,Object> result1 = new HashMap<String,Object>(); 
 		HashMap<String, Object> paramMap = new HashMap<String, Object>();
-
 		String cntPerPage = "10";
 		String nowPage = req.getParameter("nowPage");
 		if (nowPage == null) {
@@ -62,10 +63,10 @@ public class BootAppController {
 		paramMap.put("endPage", pagingResult.getEnd());
 		paramMap.put("lastPage", pagingResult.getLastPage());
 		List<TestDto> result = dao.getList(paramMap);
-
-		model.addAttribute("result", result);
-		model.addAttribute("pagingParam", paramMap);
-		return "test";
+		result1.put("data", result);
+		
+		return result1;
+		
 	}
 
 	@DeleteMapping("/delete/{boardNum}")
@@ -79,7 +80,7 @@ public class BootAppController {
 		}
 
 	}
-
+	
 	@PostMapping("/insert")
 	public String insert(@RequestBody Insert insertParams) {
 		System.out.println("insertParams ===>" + insertParams);
@@ -97,6 +98,7 @@ public class BootAppController {
 	public String update(@RequestBody Update updateParams) {
 		System.out.println("updateParams ===>" + updateParams);
 		try {
+			
 			dao.update(updateParams);
 			return "success";
 		} catch (Error e) {
